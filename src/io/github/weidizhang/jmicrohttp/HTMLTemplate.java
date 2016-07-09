@@ -35,19 +35,14 @@ public class HTMLTemplate {
 			}
 		}
 		
-		String separator = "";
-		if (!path.substring(separator.length()).equals("/")) {
-			separator = "/";
-		}
-		
 		String foldersResponse = "";
 		for (File folder : folders) {
-			foldersResponse += "<tr><td><a href=\"" + path + separator + folder.getName() + "\">" + folder.getName() + "</a></td><td>Directory</td><td>N/A</td></tr>";
+			foldersResponse += "<tr><td><a href=\"" + path + folder.getName() + "\">" + folder.getName() + "</a></td><td>Directory</td><td>N/A</td></tr>";
 		}
 		
 		String filesResponse = "";
 		for (File file : files) {
-			foldersResponse += "<tr><td><a href=\"" + path + separator + file.getName() + "\">" + file.getName() + "</a></td><td>File</td><td>" + formatFileSize(file.length()) + "</td></tr>";
+			foldersResponse += "<tr><td><a href=\"" + path + file.getName() + "\">" + file.getName() + "</a></td><td>File</td><td>" + formatFileSize(file.length()) + "</td></tr>";
 		}
 		
 		response = response.replace("{files}", foldersResponse + filesResponse);

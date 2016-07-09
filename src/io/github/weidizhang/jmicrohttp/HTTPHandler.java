@@ -44,6 +44,16 @@ public class HTTPHandler implements HttpHandler {
 		
 		if (requestedFile.exists()) {
 			if (requestedFile.isDirectory()) {
+				String requestLastChar = requestedFilePath.substring(requestedFilePath.length() - 1);
+				
+				if (!requestLastChar.equals("/")) {
+					httpCode = 301;
+					httpEx.getResponseHeaders().set("Location", requestedFilePath + "/");
+					
+					sendResponse(httpEx, httpCode, useStringResponse, response, responseBytes);
+					return;
+				}
+				
 				File indexFile = new File(requestedFile, "index.html");
 				if (indexFile.exists()) {
 					requestedFile = indexFile;
