@@ -14,7 +14,7 @@ import com.sun.net.httpserver.HttpServer;
 public class HTTPServer {
 	
 	private HttpServer httpServer;
-	private static String version = "1.0.0";
+	private static String version = "1.0.1";
 	
 	public HTTPServer(int port, String directory, boolean enableDirListing) {		
 		try {
