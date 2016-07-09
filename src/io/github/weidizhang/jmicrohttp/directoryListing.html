@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Index of {path}</title>
+		<style>
+			body
+			{
+				font-family: Arial;
+				text-align: center;
+			}
+		
+			table
+			{
+				margin: auto;
+			}
+		
+			table, th, td
+			{
+				border: 1px solid black;
+			}
+			
+			th, td
+			{
+				padding: 5px;
+				
+			}
+			
+			i
+			{
+				font-size: 12px;
+			}
+			
+			a, a:visited
+			{
+				color: blue;
+			}
+			
+			a:hover
+			{
+				color: #1175FD;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Index of {path}</h1>
+		
+		<table>
+			<tr>
+				<th>Name</th>
+				<th>Type</th>
+				<th>Size</th>
+			</tr>
+			{files}
+		</table>
+		
+		<hr>
+		<i>jMicro-HTTP v{version} by Weidi Zhang</i>
+	</body>
+</html>
+	
