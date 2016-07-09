@@ -87,19 +87,19 @@ public class HTTPHandler implements HttpHandler {
 	}
 	
 	private void sendResponse(HttpExchange httpEx, int httpCode, boolean stringResponse, String responseStr, byte[] responseByte) {
-        try {	        
-	        OutputStream outStream = httpEx.getResponseBody();
-	        
-	        if (stringResponse) {
+		try {	        
+			OutputStream outStream = httpEx.getResponseBody();
+			
+			if (stringResponse) {
 				httpEx.sendResponseHeaders(httpCode, responseStr.length());
-	        	outStream.write(responseStr.getBytes());
-	        }
-	        else {
+				outStream.write(responseStr.getBytes());
+			}
+			else {
 				httpEx.sendResponseHeaders(httpCode, 0);
-	        	outStream.write(responseByte, 0, responseByte.length);
-	        }
+				outStream.write(responseByte, 0, responseByte.length);
+			}
 	        
-	        outStream.close();
+			outStream.close();
 		} catch (IOException e) {
 			Logger.logError(e, "sending http response");
 		}
