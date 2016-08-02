@@ -5,8 +5,10 @@
  */
 package io.github.weidizhang.jmicrohttp;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,10 +23,12 @@ public class HTTPHandler implements HttpHandler {
 	private File workingDir;
 	private HTMLTemplate template = new HTMLTemplate();
 	private boolean dirListing;
+	private String phpCgiFile;
 	
-	public HTTPHandler(String directory, boolean enableDirListing) {
+	public HTTPHandler(String directory, boolean enableDirListing, String phpCgiFileLoc) {
 		workingDir = new File(directory);
 		dirListing = enableDirListing;
+		phpCgiFile = phpCgiFileLoc;
 		
 		if (!workingDir.exists() || !workingDir.isDirectory()) {
 			Logger.logError("specified directory does not exist");
@@ -54,17 +58,62 @@ public class HTTPHandler implements HttpHandler {
 					return;
 				}
 				
-				File indexFile = new File(requestedFile, "index.html");
-				if (indexFile.exists()) {
-					requestedFile = indexFile;
+				File indexFileHtml = new File(requestedFile, "index.html");
+				File indexFilePhp = new File(requestedFile, "index.php");
+				
+				if (indexFileHtml.exists()) {
+					requestedFile = indexFileHtml;
+				}
+				else if (indexFilePhp.exists()) {
+					requestedFile = indexFilePhp;				
 				}
 			}
 			
-			if (requestedFile.isFile()) {			
-				responseBytes = readFile(requestedFile.getAbsolutePath());
-				
-				String mimeType = getMimeType(requestedFile.getAbsolutePath());
-				httpEx.getResponseHeaders().set("Content-Type", mimeType);
+			if (requestedFile.isFile()) {				
+				if (!phpCgiFile.equals(null) && getFileExtension(requestedFile.getAbsolutePath()).equalsIgnoreCase("php")) {
+					String phpResponse = getPhpCgiResponse(requestedFile.getAbsolutePath());
+					
+					int divideIndex = phpResponse.indexOf("\n\n");
+					String phpHeaders = "";
+					String phpBody = "";
+					
+					if (divideIndex > -1) {
+						phpHeaders = phpResponse.substring(0, divideIndex);
+						phpBody = phpResponse.substring(divideIndex + 1);
+					}
+					else {
+						phpHeaders = phpResponse.trim();
+					}
+					
+					String[] headersArray = phpHeaders.split("\n");
+					for (String fullHeader : headersArray) {
+						int headerDivide = fullHeader.indexOf(":");
+						
+						if (headerDivide > -1) {
+							String headerName = fullHeader.substring(0, headerDivide);
+							String headerContents = fullHeader.substring(headerDivide + 1).trim();
+							
+							if (headerName.equalsIgnoreCase("Status")) {
+								String headerCode = headerContents;
+								if (headerCode.indexOf(" ") > -1) {
+									headerCode = headerCode.substring(0, headerCode.indexOf(" "));
+									
+									httpCode = Integer.parseInt(headerCode);
+								}
+							}
+							
+							httpEx.getResponseHeaders().set(headerName, headerContents);
+						}
+					}
+									
+					responseBytes = phpBody.getBytes();					
+				}
+				else {
+					String mimeType = getMimeType(requestedFile.getAbsolutePath());
+					responseBytes = readFile(requestedFile.getAbsolutePath());
+					
+					httpEx.getResponseHeaders().set("Content-Type", mimeType);
+				}
 			}
 			else {
 				useStringResponse = true;
@@ -131,5 +180,42 @@ public class HTTPHandler implements HttpHandler {
 		}
 		
 		return mimeType;
+	}
+	
+	private String getFileExtension(String filePath) {
+		String[] fileParts = filePath.split("\\.");
+		if (fileParts.length > 0) {
+			return fileParts[fileParts.length - 1];
+		}
+		
+		return "";
+	}
+	
+	private String getPhpCgiResponse(String filePath) {
+		try {
+			String builtCmd = "\"" + phpCgiFile + "\" \"" + filePath + "\"";
+			Process process = Runtime.getRuntime().exec(builtCmd);
+			
+			BufferedReader bReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			
+			String output = "";
+			while (true) {
+				String line = bReader.readLine();
+				if (line != null) {
+					output += line + "\n";
+				}
+				else {
+					break;
+				}
+			}
+			
+			bReader.close();
+			
+			return output.substring(0, output.length() - 1);
+		} catch (IOException e) {
+			Logger.logError(e, "getting php-cgi response");
+			
+			return "";
+		}
 	}
 }
