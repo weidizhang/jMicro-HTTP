@@ -77,7 +77,7 @@ public class HTTPHandler implements HttpHandler {
 			}
 			
 			if (requestedFile.isFile()) {				
-				if (!phpCgiFile.equals(null) && getFileExtension(requestedFile.getAbsolutePath()).equalsIgnoreCase("php")) {
+				if (phpCgiFile != null && getFileExtension(requestedFile.getAbsolutePath()).equalsIgnoreCase("php")) {
 					String phpResponse = getPhpCgiResponse(requestedFile.getAbsolutePath());
 					
 					int divideIndex = phpResponse.indexOf("\n\n");
