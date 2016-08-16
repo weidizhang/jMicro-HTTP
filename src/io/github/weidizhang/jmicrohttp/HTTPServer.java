@@ -15,11 +15,7 @@ public class HTTPServer {
 	
 	private HttpServer httpServer;
 	private static String version = "1.1.1";
-	
-	public HTTPServer(int port, String directory, boolean enableDirListing, boolean verboseMode) {	
-		this(port, directory, enableDirListing, verboseMode, null);
-	}
-	
+		
 	public HTTPServer(int port, String directory, boolean enableDirListing, boolean verboseMode, String phpCgiFile) {		
 		try {
 			httpServer = HttpServer.create(new InetSocketAddress(port), 0);
