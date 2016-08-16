@@ -31,7 +31,7 @@ public class HTTPHandler implements HttpHandler {
 		phpCgiFile = phpCgiFileLoc;
 		
 		if (!workingDir.exists() || !workingDir.isDirectory()) {
-			Logger.logError("specified directory does not exist");
+			LogHelper.getLogger().warning("Specified root directory does not exist");
 		}
 	}
 	
@@ -150,7 +150,8 @@ public class HTTPHandler implements HttpHandler {
 	        
 			outStream.close();
 		} catch (IOException e) {
-			Logger.logError(e, "sending http response");
+			LogHelper.getLogger().severe("Error sending HTTP response");
+			LogHelper.getLogger().severe(LogHelper.getStringStackTrace(e));
 		}
 	}
 	
@@ -160,7 +161,8 @@ public class HTTPHandler implements HttpHandler {
 			
 			return fileBytes;
 		} catch (IOException e) {
-			Logger.logError(e, "reading file");	
+			LogHelper.getLogger().severe("Error reading file being accessed");
+			LogHelper.getLogger().severe(LogHelper.getStringStackTrace(e));
 			
 			return new byte[] {};
 		}
@@ -172,7 +174,8 @@ public class HTTPHandler implements HttpHandler {
 			Path path = Paths.get(filePath);
 			mimeType = Files.probeContentType(path);
 		} catch (IOException e) {
-			Logger.logError(e, "getting mime type");
+			LogHelper.getLogger().severe("Error determining mime type");
+			LogHelper.getLogger().severe(LogHelper.getStringStackTrace(e));
 		}
 		
 		if (mimeType == null || mimeType.equals("")) {
@@ -213,7 +216,8 @@ public class HTTPHandler implements HttpHandler {
 			
 			return output.substring(0, output.length() - 1);
 		} catch (IOException e) {
-			Logger.logError(e, "getting php-cgi response");
+			LogHelper.getLogger().severe("Error getting response from PHP-CGI");
+			LogHelper.getLogger().severe(LogHelper.getStringStackTrace(e));
 			
 			return "";
 		}

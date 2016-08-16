@@ -26,20 +26,21 @@ public class HTTPServer {
 			httpServer.createContext("/", new HTTPHandler(directory, enableDirListing, phpCgiFile));
 			httpServer.setExecutor(null);
 		} catch (IOException e) {
-			Logger.logError(e, "initialization");
+			LogHelper.getLogger().severe("Error at initialization");
+			LogHelper.getLogger().severe(LogHelper.getStringStackTrace(e));
 		}        
 	}
 	
 	public void startServer() {
 		httpServer.start();
 		
-		Logger.logNotice("Server started");
+		LogHelper.getLogger().info("Server started");
 	}
 	
 	public void stopServer() {
 		httpServer.stop(0);
 		
-		Logger.logNotice("Server stopped");
+		LogHelper.getLogger().info("Server stopped");
 	}
 	
 	public static String getVersion() {
