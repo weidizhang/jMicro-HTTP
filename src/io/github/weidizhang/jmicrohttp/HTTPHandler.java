@@ -24,11 +24,13 @@ public class HTTPHandler implements HttpHandler {
 	private HTMLTemplate template = new HTMLTemplate();
 	private boolean dirListing;
 	private String phpCgiFile;
+	private boolean verboseMode;
 	
-	public HTTPHandler(String directory, boolean enableDirListing, String phpCgiFileLoc) {
+	public HTTPHandler(String directory, boolean enableDirListing, boolean verbose, String phpCgiFileLoc) {
 		workingDir = new File(directory);
 		dirListing = enableDirListing;
 		phpCgiFile = phpCgiFileLoc;
+		verboseMode = verbose;
 		
 		if (!workingDir.exists() || !workingDir.isDirectory()) {
 			LogHelper.getLogger().warning("Specified root directory does not exist");
@@ -37,6 +39,11 @@ public class HTTPHandler implements HttpHandler {
 	
 	@Override
 	public void handle(HttpExchange httpEx) {
+		if (verboseMode) {
+			String requestDetails = "Client: " + httpEx.getRemoteAddress().toString() + ", Request: " + httpEx.getProtocol() + " " + httpEx.getRequestMethod() + " " + httpEx.getRequestURI().toString();
+			LogHelper.getLogger().info(requestDetails);
+		}
+		
 		boolean useStringResponse = false;
 		String response = "";
 		byte[] responseBytes = {};
@@ -149,6 +156,11 @@ public class HTTPHandler implements HttpHandler {
 			}
 	        
 			outStream.close();
+			
+			if (verboseMode) {
+				String responseDetails = "Client: " + httpEx.getRemoteAddress().toString() + ", Response: " + httpEx.getProtocol() + " " + httpEx.getResponseCode();
+				LogHelper.getLogger().info(responseDetails);
+			}
 		} catch (IOException e) {
 			LogHelper.getLogger().severe("Error sending HTTP response");
 			LogHelper.getLogger().severe(LogHelper.getStringStackTrace(e));

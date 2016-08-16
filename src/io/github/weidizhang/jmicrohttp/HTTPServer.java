@@ -16,14 +16,14 @@ public class HTTPServer {
 	private HttpServer httpServer;
 	private static String version = "1.1.1";
 	
-	public HTTPServer(int port, String directory, boolean enableDirListing) {	
-		this(port, directory, enableDirListing, null);
+	public HTTPServer(int port, String directory, boolean enableDirListing, boolean verboseMode) {	
+		this(port, directory, enableDirListing, verboseMode, null);
 	}
 	
-	public HTTPServer(int port, String directory, boolean enableDirListing, String phpCgiFile) {		
+	public HTTPServer(int port, String directory, boolean enableDirListing, boolean verboseMode, String phpCgiFile) {		
 		try {
 			httpServer = HttpServer.create(new InetSocketAddress(port), 0);
-			httpServer.createContext("/", new HTTPHandler(directory, enableDirListing, phpCgiFile));
+			httpServer.createContext("/", new HTTPHandler(directory, enableDirListing, verboseMode, phpCgiFile));
 			httpServer.setExecutor(null);
 		} catch (IOException e) {
 			LogHelper.getLogger().severe("Error at initialization");
