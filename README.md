@@ -18,4 +18,13 @@ is not yet supported.
 
 ## Usage
 
-See src/io/github/weidizhang/tester/Main.java
+Download the latest .jar release: https://github.com/weidizhang/jMicro-HTTP/releases
+
+Run the jar using (command line):
+```
+java -jar jMicro-HTTP.jar
+```
+
+On first run, config.properties will be generated.
+
+Edit this file, then run the jar again to start the server.

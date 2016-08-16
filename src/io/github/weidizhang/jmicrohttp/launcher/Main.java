@@ -17,6 +17,7 @@ public class Main {
 		File configFile = new File(configFileLoc);
 		
 		LogHelper.getLogger().info("Starting jMicro-HTTP v" + HTTPServer.getVersion());
+		LogHelper.getLogger().info("GitHub: https://github.com/weidizhang/jMicro-HTTP");
 		
 		if (!configFile.exists()) {
 			generateDefaultConfig();
