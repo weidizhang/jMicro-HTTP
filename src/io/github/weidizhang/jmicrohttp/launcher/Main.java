@@ -16,6 +16,8 @@ public class Main {
 	public static void main(String[] args) {
 		File configFile = new File(configFileLoc);
 		
+		LogHelper.getLogger().info("Starting jMicro-HTTP v" + HTTPServer.getVersion());
+		
 		if (!configFile.exists()) {
 			generateDefaultConfig();
 		}
